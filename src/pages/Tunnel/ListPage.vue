@@ -605,8 +605,12 @@
                 <template #header-extra>
                     <n-tooltip trigger="hover">
                         <template #trigger>
-                            <n-tag round :bordered="false" :type="card.status?.type">
+                            <n-tag v-if="frpStore.frpMap.get(card.id.toString()) === undefined" round :bordered="false" :type="card.status?.type">
                                 {{ card.status?.label }}
+                            </n-tag>
+                            <!--接管状态展示-->
+                            <n-tag v-else round :bordered="false" :type="frpStore.frpMap.get(card.id.toString())?.status.type">
+                                {{ frpStore.frpMap.get(card.id.toString())?.status.label }}
                             </n-tag>
                         </template>
                         {{ card.status?.description }}
@@ -614,17 +618,25 @@
                 </template>
                 <n-thing content-style="margin-top: 10px;">
                     <template #description>
-                        <n-space size="small" style="margin-top: 4px">
-                            <n-tag
-                                round
-                                v-for="(tag, tagIndex) in card.tags"
-                                :key="tagIndex"
-                                :bordered="false"
-                                type="primary"
-                                size="small"
-                            >
-                                {{ tag }}
-                            </n-tag>
+                        <n-space size="small" justify="space-between" align="center" style="margin-top: 4px">
+                            <n-space size="small">
+                                <n-tag
+                                    round
+                                    v-for="(tag, tagIndex) in card.tags"
+                                    :key="tagIndex"
+                                    :bordered="false"
+                                    type="primary"
+                                    size="small"
+                                >
+                                    {{ tag }}
+                                </n-tag>
+                            </n-space>
+                            <n-tooltip :style="{ maxWidth: '400px',maxHeight: '320px' }" scrollable placement="left" :show-arrow="false" trigger="hover">
+                                <template #trigger>
+                                    <n-switch v-show="card.status?.label && !['永久下线','节点掉线'].includes(card.status.label)" :value="frpStore.frpMap.get(card.id.toString())?.isOpen" size="medium" @update:value="openFrpc($event, card)" />
+                                </template>
+                                    {{ [null, undefined, ''].includes(frpStore.frpMap.get(card.id.toString())?.log) ? '未启动':frpStore.frpMap.get(card.id.toString())?.log }}
+                            </n-tooltip>
                         </n-space>
                     </template>
                     <a
@@ -2255,6 +2267,33 @@ const forceCheck = () => {
 setInterval(() => {
     forceCheck();
 }, 10000);
+
+
+import { Command } from '@tauri-apps/plugin-shell';
+import { useFrpStore } from '@/stores/frpc';
+const frpStore = useFrpStore()
+// 开启frpc
+const openFrpc = async (value: boolean,it: TunnelCard) => {
+    if(value){
+        // 创建启动指令
+        const frpc_command = Command.sidecar('binaries/frpc',[
+            '-u',
+            userInfo!!.usertoken,
+            '-p',
+            it.id.toString(),
+        ]);
+        frpc_command.stdout.on('data', line => {
+            frpStore.saveOutLog(it.id.toString(), line)
+        })
+        //保存id对应child
+        const child = await frpc_command.spawn();
+        await frpStore.savePid(it.id.toString(), child.pid)
+        // TODO 移除相对路径的frpc.ini配置文件
+    }else{
+        await frpStore.closePid(it.id.toString())
+    }
+}
+
 </script>
 
 <style scoped>

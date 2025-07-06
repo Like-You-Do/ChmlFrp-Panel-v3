@@ -1,0 +1,33 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "enables the default permissions",
+  "windows": [
+    "main"
+  ],
+  "permissions": [
+    "core:default",
+    "shell:allow-kill",
+    {
+      "identifier": "shell:allow-spawn",
+      "allow": [
+        {
+          "args": [
+            "-u",
+            {
+              "validator": "\\S+"
+            },
+            "-p",
+            {
+              "validator": "\\S+"
+            }
+          ],
+          "name": "binaries/frpc",
+          "sidecar": true
+        }
+      ]
+    },
+    "shell:allow-open",
+    "fs:default"
+  ]
+}
