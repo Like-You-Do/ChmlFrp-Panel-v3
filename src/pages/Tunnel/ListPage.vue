@@ -2298,7 +2298,9 @@ const openFrpc = async (value: boolean,it: TunnelCard) => {
                 await remove('frpc.ini', {baseDir: BaseDirectory.Home})
             }
             case 'windows': {
-
+                setTimeout(async ()=>{
+                    await remove('frpc.ini', {baseDir: BaseDirectory.Resource})
+                },1000)
             }
         }
 

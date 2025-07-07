@@ -28,6 +28,8 @@
       ]
     },
     "shell:allow-open",
-    "fs:allow-home-write"
+    "fs:allow-home-write",
+    "fs:allow-resource-write",
+    "os:default"
   ]
 }

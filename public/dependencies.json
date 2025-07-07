@@ -2,6 +2,7 @@
   "dependencies": {
     "@tauri-apps/api": "^2.6.0",
     "@tauri-apps/plugin-fs": "~2.4.0",
+    "@tauri-apps/plugin-os": "~2.3.0",
     "@tauri-apps/plugin-shell": "~2",
     "@vicons/fa": "^0.13.0",
     "@vicons/ionicons5": "^0.13.0",
@@ -40,5 +41,5 @@
     "vite": "^6.3.5"
   },
   "version": "1.2.1",
-  "buildTime": "2025/07/07 20:45:27"
+  "buildTime": "2025/07/07 23:11:33"
 }
