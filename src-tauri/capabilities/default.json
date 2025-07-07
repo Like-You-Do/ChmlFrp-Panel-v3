@@ -28,6 +28,6 @@
       ]
     },
     "shell:allow-open",
-    "fs:default"
+    "fs:allow-home-write"
   ]
 }

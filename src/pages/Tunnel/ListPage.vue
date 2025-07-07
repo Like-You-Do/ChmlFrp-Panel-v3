@@ -635,7 +635,7 @@
                                 <template #trigger>
                                     <n-switch v-show="card.status?.label && !['永久下线','节点掉线'].includes(card.status.label)" :value="frpStore.frpMap.get(card.id.toString())?.isOpen" size="medium" @update:value="openFrpc($event, card)" />
                                 </template>
-                                    {{ [null, undefined, ''].includes(frpStore.frpMap.get(card.id.toString())?.log) ? '未启动':frpStore.frpMap.get(card.id.toString())?.log }}
+                                    <div v-html="[null, undefined, ''].includes(frpStore.frpMap.get(card.id.toString())?.log) ? '未启动':frpStore.frpMap.get(card.id.toString())?.log"></div>
                             </n-tooltip>
                         </n-space>
                     </template>
@@ -2271,6 +2271,7 @@ setInterval(() => {
 
 import { Command } from '@tauri-apps/plugin-shell';
 import { useFrpStore } from '@/stores/frpc';
+import {remove, BaseDirectory} from "@tauri-apps/plugin-fs";
 const frpStore = useFrpStore()
 // 开启frpc
 const openFrpc = async (value: boolean,it: TunnelCard) => {
@@ -2289,6 +2290,8 @@ const openFrpc = async (value: boolean,it: TunnelCard) => {
         const child = await frpc_command.spawn();
         await frpStore.savePid(it.id.toString(), child.pid)
         // TODO 移除相对路径的frpc.ini配置文件
+        await remove('frpc.ini', {baseDir: BaseDirectory.Home})
+
     }else{
         await frpStore.closePid(it.id.toString())
     }

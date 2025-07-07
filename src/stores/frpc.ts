@@ -50,7 +50,7 @@ export const useFrpStore = defineStore('frp', () => {
     const saveOutLog = (id: String, log: String) => {
         const that = frpMap.value.get(id);
         if (that != null) {
-            that.log += log;
+            that.log += log.replace('\n', '<br/>');
         }
     };
 
