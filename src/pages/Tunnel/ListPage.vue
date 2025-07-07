@@ -2272,6 +2272,7 @@ setInterval(() => {
 import { Command } from '@tauri-apps/plugin-shell';
 import { useFrpStore } from '@/stores/frpc';
 import {remove, BaseDirectory} from "@tauri-apps/plugin-fs";
+import { platform } from '@tauri-apps/plugin-os';
 const frpStore = useFrpStore()
 // 开启frpc
 const openFrpc = async (value: boolean,it: TunnelCard) => {
@@ -2289,8 +2290,17 @@ const openFrpc = async (value: boolean,it: TunnelCard) => {
         //保存id对应child
         const child = await frpc_command.spawn();
         await frpStore.savePid(it.id.toString(), child.pid)
-        // TODO 移除相对路径的frpc.ini配置文件
-        await remove('frpc.ini', {baseDir: BaseDirectory.Home})
+
+        const platformName = platform();
+        // 移除相对路径的frpc.ini配置文件
+        switch(platformName){
+            case 'linux': {
+                await remove('frpc.ini', {baseDir: BaseDirectory.Home})
+            }
+            case 'windows': {
+
+            }
+        }
 
     }else{
         await frpStore.closePid(it.id.toString())
