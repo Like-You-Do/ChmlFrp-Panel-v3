@@ -2292,17 +2292,19 @@ const openFrpc = async (value: boolean,it: TunnelCard) => {
         await frpStore.savePid(it.id.toString(), child.pid)
 
         const platformName = platform();
-        // 移除相对路径的frpc.ini配置文件
-        switch(platformName){
+
+        setTimeout(async ()=>{
+          // 移除相对路径的frpc.ini配置文件
+          switch(platformName){
             case 'linux': {
-                await remove('frpc.ini', {baseDir: BaseDirectory.Home})
+              await remove('frpc.ini', {baseDir: BaseDirectory.Home})
             }
             case 'windows': {
-                setTimeout(async ()=>{
-                    await remove('frpc.ini', {baseDir: BaseDirectory.Resource})
-                },1000)
+              await remove('frpc.ini', {baseDir: BaseDirectory.Resource})
             }
-        }
+          }
+        },1000)
+
 
     }else{
         await frpStore.closePid(it.id.toString())
